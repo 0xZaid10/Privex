@@ -1,0 +1,6 @@
+[package]
+name = "multi_address"
+type = "bin"
+authors = [""]
+
+[dependencies]

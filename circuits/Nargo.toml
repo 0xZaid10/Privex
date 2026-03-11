@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "balance",
+    "multi_address",
+    "historical",
+    "balance_commit",
+    "multi_commit",
+    "historical_commit",
+]

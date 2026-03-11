@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Privex — Bitcoin Ownership. Zero Knowledge.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#080808; --bg1:#0e0e0e; --bg2:#141414;
+      --border:#1c1c1c; --border2:#2a2a2a;
+      --text:#ffffff; --muted:#aaaaaa; --muted2:#666666;
+      --orange:#f7931a; --oranged:#e8820a;
+      --purple:#a78bfa; --purpled:#9061f9;
+      --green:#4caf50;
+      --fd:'Syne',sans-serif; --fm:'JetBrains Mono',monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--fm);font-size:15px;line-height:1.75;overflow-x:hidden}
+
+    /* grid bg */
+    body::before{content:'';position:fixed;inset:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:56px 56px;opacity:.25;pointer-events:none;z-index:0}
+
+    /* ── HEADER ── */
+    header{position:fixed;top:0;left:0;right:0;height:60px;display:flex;align-items:center;
+      justify-content:space-between;padding:0 40px;
+      background:rgba(8,8,8,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      border-bottom:1px solid var(--border);z-index:200}
+    .logo-wrap{display:flex;flex-direction:column;gap:1px}
+    .logo{font-family:var(--fd);font-size:21px;font-weight:800;color:var(--orange);letter-spacing:-0.5px;text-decoration:none}
+    .logo-tag{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+    nav{display:flex;gap:28px;position:absolute;left:50%;transform:translateX(-50%)}
+    nav a{font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:.4px;transition:color .18s;padding:4px 0;border-bottom:1px solid transparent}
+    nav a:hover{color:var(--text)}
+    nav a.active{color:var(--orange);border-bottom-color:var(--orange)}
+    .hdr-right{display:flex;align-items:center;gap:10px}
+    .waddr{font-size:10px;color:var(--muted)}
+    .wbtn{font-family:var(--fm);font-size:11px;padding:6px 14px;background:transparent;
+      color:var(--purple);border:1px solid rgba(167,139,250,.4);border-radius:3px;cursor:pointer;transition:all .18s}
+    .wbtn:hover{background:var(--purple);color:#000;border-color:var(--purple)}
+    .wbtn.on{color:var(--green);border-color:rgba(76,175,80,.4)}
+    .wbtn.on:hover{background:var(--green);color:#000}
+
+    /* ── MAIN ── */
+    main{position:relative;z-index:1}
+
+    /* ── HERO ── */
+    .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+      align-items:center;text-align:center;padding:100px 40px 72px}
+    .badge{display:inline-flex;align-items:center;gap:8px;font-size:10px;color:var(--orange);
+      border:1px solid rgba(247,147,26,.2);background:rgba(247,147,26,.05);
+      padding:5px 14px;border-radius:2px;letter-spacing:1.8px;text-transform:uppercase;
+      margin-bottom:44px;opacity:0;animation:up .6s .1s ease forwards}
+    .badge-dot{width:5px;height:5px;border-radius:50%;background:var(--orange);animation:blink 2s ease infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .hero h1{font-family:var(--fd);font-size:clamp(50px,9vw,104px);font-weight:800;
+      line-height:.94;letter-spacing:-3px;margin-bottom:30px;opacity:0;animation:up .7s .2s ease forwards}
+    .h1-o{color:var(--orange)} .h1-p{color:var(--purple)} .h1-d{color:rgba(255,255,255,.3)}
+    .hero-sub{font-size:15px;color:var(--muted);max-width:480px;line-height:1.85;
+      margin-bottom:48px;opacity:0;animation:up .7s .35s ease forwards}
+    .hero-sub strong{color:var(--text);font-weight:500}
+    .hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+      opacity:0;animation:up .7s .5s ease forwards}
+    .btn-p{font-family:var(--fm);font-size:12px;font-weight:500;padding:11px 26px;
+      background:var(--orange);color:#000;border:none;border-radius:3px;
+      cursor:pointer;text-decoration:none;transition:background .18s,transform .15s;display:inline-block}
+    .btn-p:hover{background:var(--oranged);transform:translateY(-1px)}
+    .btn-s{font-family:var(--fm);font-size:12px;padding:11px 26px;background:transparent;
+      color:var(--text);border:1px solid var(--border2);border-radius:3px;
+      cursor:pointer;text-decoration:none;transition:border-color .18s,transform .15s;display:inline-block}
+    .btn-s:hover{border-color:var(--muted);transform:translateY(-1px)}
+    .hero-stats{display:flex;gap:52px;margin-top:80px;padding-top:44px;
+      border-top:1px solid var(--border);opacity:0;animation:up .7s .65s ease forwards}
+    .stat-v{font-family:var(--fd);font-size:28px;font-weight:700;color:var(--orange);display:block}
+    .stat-l{font-size:9px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-top:3px;display:block}
+    @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+    /* ── SECTIONS ── */
+    .si{max-width:1080px;margin:0 auto;padding:96px 40px}
+    .sl{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--orange);margin-bottom:14px}
+    .sh{font-family:var(--fd);font-size:clamp(28px,4vw,44px);font-weight:700;
+      line-height:1.08;letter-spacing:-1px;margin-bottom:18px}
+    .ss{font-size:15px;color:var(--muted);max-width:520px;line-height:1.85;margin-bottom:52px}
+
+    /* ── PROBLEM ── */
+    .prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border)}
+    .pc{background:var(--bg1);padding:36px 32px;transition:background .2s}
+    .pc:hover{background:var(--bg2)}
+    .pc.hi{background:rgba(247,147,26,.03);border:none}
+    .pc-icon{font-size:22px;margin-bottom:18px;display:block}
+    .pc h3{font-family:var(--fd);font-size:17px;font-weight:600;margin-bottom:10px}
+    .pc p{font-size:13px;color:var(--muted);line-height:1.8}
+    .tag{display:inline-block;font-size:10px;letter-spacing:.8px;text-transform:uppercase;
+      padding:3px 10px;border-radius:2px;margin-top:14px}
+    .tag-b{background:rgba(244,67,54,.08);color:#f44336;border:1px solid rgba(244,67,54,.15)}
+    .tag-a{background:rgba(76,175,80,.08);color:var(--green);border:1px solid rgba(76,175,80,.15)}
+
+    /* ── HOW IT WORKS ── */
+    .how-bg{background:var(--bg1);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .steps{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border);margin-top:52px}
+    .sc{padding:36px 26px;border-right:1px solid var(--border);position:relative;transition:background .2s}
+    .sc:last-child{border-right:none}
+    .sc:hover{background:rgba(255,255,255,.018)}
+    .sc-n{font-family:var(--fd);font-size:40px;font-weight:800;color:var(--border2);
+      line-height:1;margin-bottom:20px;display:block}
+    .sc h3{font-family:var(--fd);font-size:15px;font-weight:600;margin-bottom:9px}
+    .sc p{font-size:13px;color:var(--muted);line-height:1.8}
+    .sc-tag{position:absolute;top:14px;right:14px;font-size:10px;letter-spacing:.8px;
+      text-transform:uppercase;color:var(--purple);border:1px solid rgba(167,139,250,.18);
+      padding:2px 8px;border-radius:2px}
+
+    /* terminal */
+    .term{background:#0a0a0a;border:1px solid var(--border);border-radius:3px;
+      padding:22px 26px;font-size:12px;line-height:2.1;margin-top:44px;max-width:600px}
+    .t-p{color:var(--muted)} .t-c{color:var(--orange)} .t-v{color:var(--purple)} .t-ok{color:var(--green)}
+
+    /* ── USE CASES ── */
+    .use-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);
+      border:1px solid var(--border);margin-top:52px}
+    .uc{background:var(--bg);padding:34px 28px;transition:background .2s}
+    .uc:hover{background:var(--bg1)}
+    .uc-i{font-size:26px;margin-bottom:16px;display:block}
+    .uc h3{font-family:var(--fd);font-size:16px;font-weight:600;margin-bottom:9px}
+    .uc p{font-size:13px;color:var(--muted);line-height:1.8}
+    .uc-w{margin-top:14px;font-size:10px;color:var(--orange);letter-spacing:.8px;text-transform:uppercase}
+
+    /* ── STACK ── */
+    .stack-bg{background:var(--bg1);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .stack-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+      background:var(--border);border:1px solid var(--border);margin-top:52px}
+    .stk{background:var(--bg1);padding:28px 24px}
+    .stk-n{font-family:var(--fd);font-size:16px;font-weight:700;margin-bottom:5px}
+    .stk-v{font-size:11px;color:var(--orange);letter-spacing:.4px;margin-bottom:10px;display:block}
+    .stk p{font-size:13px;color:var(--muted);line-height:1.75}
+
+    /* ── CTA ── */
+    .cta{text-align:center;padding:112px 40px}
+    .cta h2{font-family:var(--fd);font-size:clamp(30px,5vw,52px);font-weight:800;
+      letter-spacing:-2px;margin-bottom:18px;line-height:1.05}
+    .cta > p{font-size:15px;color:var(--muted);max-width:440px;margin:0 auto 48px;line-height:1.85}
+    .cta-cards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+    .cc{background:var(--bg1);border:1px solid var(--border);padding:32px 34px;border-radius:3px;
+      width:270px;text-align:left;text-decoration:none;display:block;transition:border-color .2s,transform .2s}
+    .cc:hover{transform:translateY(-3px)}
+    .cc.cc-o:hover{border-color:var(--orange)}
+    .cc.cc-v:hover{border-color:var(--purple)}
+    .cc-icon{font-size:26px;margin-bottom:14px;display:block}
+    .cc h3{font-family:var(--fd);font-size:18px;font-weight:700;color:var(--text);margin-bottom:7px}
+    .cc p{font-size:13px;color:var(--muted);line-height:1.75;margin:0}
+    .cc-arr{display:inline-block;margin-top:18px;font-size:11px}
+    .cc-o .cc-arr{color:var(--orange)} .cc-v .cc-arr{color:var(--purple)}
+
+    /* ── FOOTER ── */
+    footer{border-top:1px solid var(--border);padding:36px 40px;
+      display:flex;align-items:center;justify-content:space-between;
+      position:relative;z-index:1;flex-wrap:wrap;gap:20px}
+    .fl{display:flex;flex-direction:column;gap:6px}
+    .flogo{font-family:var(--fd);font-size:15px;font-weight:800;color:var(--orange);text-decoration:none}
+    .fcopy{font-size:11px;color:var(--muted2)}
+    .flinks{display:flex;gap:24px}
+    .flinks a{color:var(--muted);text-decoration:none;font-size:12px;transition:color .18s}
+    .flinks a:hover{color:var(--text)}
+    .fsoc{display:flex;gap:12px}
+    .si-a{width:32px;height:32px;border:1px solid var(--border2);border-radius:3px;
+      display:flex;align-items:center;justify-content:center;color:var(--muted);
+      text-decoration:none;transition:all .18s}
+    .si-a:hover{border-color:var(--muted);color:var(--text)}
+    .si-a svg{width:14px;height:14px;fill:currentColor}
+
+    /* ── REVEAL ── */
+    .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+    .rv.in{opacity:1;transform:none}
+
+    @media(max-width:900px){
+      nav{display:none}
+      .prob-grid,.use-grid{grid-template-columns:1fr}
+      .steps{grid-template-columns:1fr 1fr}
+      .sc{border-right:none;border-bottom:1px solid var(--border)}
+      .stack-grid{grid-template-columns:1fr 1fr}
+      .si{padding:72px 24px}
+      header{padding:0 20px}
+    }
+    @media(max-width:600px){
+      .steps,.stack-grid{grid-template-columns:1fr}
+      .hero-stats{gap:28px;flex-wrap:wrap;justify-content:center}
+      footer{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo-wrap" style="text-decoration:none">
+    <span class="logo">Privex</span>
+    <span class="logo-tag">Bitcoin · Zero Knowledge</span>
+  </a>
+  <nav>
+    <a href="/" class="active">Home</a>
+    <a href="/proof.html">Proof Engine</a>
+    <a href="/report.html">Report</a>
+  </nav>
+  <div class="hdr-right">
+    <span class="waddr" id="waddr"></span>
+    <button class="wbtn" id="wbtn">Connect Wallet</button>
+  </div>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge"><span class="badge-dot"></span>Starknet Sepolia · Live</div>
+  <h1>
+    <span class="h1-o">Bitcoin</span><br>
+    <span class="h1-d">ownership,</span><br>
+    <span class="h1-p">zero</span> knowledge<span class="h1-d">.</span>
+  </h1>
+  <p class="hero-sub">
+    Prove you hold Bitcoin — <strong>without revealing your address.</strong><br>
+    ZK proofs generated entirely in your browser. Verified on Starknet.
+  </p>
+  <div class="hero-btns">
+    <a href="/proof.html" class="btn-p">Open Proof Engine →</a>
+    <a href="/report.html" class="btn-s">Generate Report</a>
+  </div>
+  <div class="hero-stats">
+    <div><span class="stat-v">3</span><span class="stat-l">Proof circuits</span></div>
+    <div><span class="stat-v">0</span><span class="stat-l">Address revealed</span></div>
+    <div><span class="stat-v">100%</span><span class="stat-l">In-browser</span></div>
+    <div><span class="stat-v">L2</span><span class="stat-l">On-chain verify</span></div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section>
+<div class="si">
+  <p class="sl rv">The Problem</p>
+  <h2 class="sh rv">Proving Bitcoin ownership<br>costs you your privacy.</h2>
+  <p class="ss rv">Every time you prove you hold Bitcoin — for KYC, DeFi collateral, DAO voting, or trust — you hand over your address. That means your entire transaction history, your balance, and every wallet you've ever touched.</p>
+  <div class="prob-grid rv">
+    <div class="pc">
+      <span class="pc-icon">🔍</span>
+      <h3>Your address reveals everything</h3>
+      <p>A Bitcoin address is a permanent public record. Share it once and anyone can trace every transaction you've ever made — past, present, and future.</p>
+      <span class="tag tag-b">Status quo</span>
+    </div>
+    <div class="pc hi">
+      <span class="pc-icon">🔒</span>
+      <h3>Prove the fact, not the address</h3>
+      <p>With Privex you prove "I hold ≥ 0.5 BTC since block 850,000" using a ZK proof. The verifier learns only that — nothing else about you.</p>
+      <span class="tag tag-a">With Privex</span>
+    </div>
+    <div class="pc">
+      <span class="pc-icon">📊</span>
+      <h3>Balance exposed on explorers</h3>
+      <p>Traditional proof requires a signed message from your address — permanently linking your identity to your exact holdings on every public explorer.</p>
+      <span class="tag tag-b">Status quo</span>
+    </div>
+    <div class="pc hi">
+      <span class="pc-icon">⚡</span>
+      <h3>Only the threshold hits the chain</h3>
+      <p>The on-chain record shows threshold, ZK commitment, and your chosen username. Actual balance, address, and history stay entirely off-chain.</p>
+      <span class="tag tag-a">With Privex</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-bg">
+<div class="si">
+  <p class="sl rv">How It Works</p>
+  <h2 class="sh rv">Four steps.<br>Fully in your browser.</h2>
+  <p class="ss rv">No backend. No server. No private key transmission. Everything from proof generation to on-chain settlement happens client-side using Noir circuits compiled to WASM.</p>
+  <div class="steps rv">
+    <div class="sc">
+      <span class="sc-n">01</span>
+      <span class="sc-tag">Bitcoin</span>
+      <h3>Fetch UTXOs</h3>
+      <p>Your Bitcoin address fetches UTXO data from mempool.space locally. Block headers are retrieved to anchor timestamps on-chain.</p>
+    </div>
+    <div class="sc">
+      <span class="sc-n">02</span>
+      <span class="sc-tag">Noir</span>
+      <h3>Generate ZK Proof</h3>
+      <p>A Noir circuit runs in your browser via bb.js WASM. It proves balance ≥ threshold and historical ownership — exposing no private inputs.</p>
+    </div>
+    <div class="sc">
+      <span class="sc-n">03</span>
+      <span class="sc-tag">Garaga</span>
+      <h3>Encode Calldata</h3>
+      <p>Garaga transforms the UltraKeccakZKHonk proof into Starknet calldata — the exact format the on-chain verifier contract expects.</p>
+    </div>
+    <div class="sc">
+      <span class="sc-n">04</span>
+      <span class="sc-tag">Starknet</span>
+      <h3>Verify On-Chain</h3>
+      <p>Your wallet submits the proof to the router. The Garaga verifier confirms it. The result is permanent, public, and trustless.</p>
+    </div>
+  </div>
+  <div class="term rv">
+    <div><span class="t-p">$ </span><span class="t-c">circuit</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-p">: balance_threshold</span></div>
+    <div><span class="t-p">  threshold </span><span class="t-p">: </span><span class="t-v">0.20000000 BTC</span></div>
+    <div><span class="t-p">  commitment</span><span class="t-p">: </span><span class="t-v">0x2bf71c003dcd0df46f9ecf4f...</span></div>
+    <div><span class="t-p">  username  </span><span class="t-p">: </span><span class="t-v">"zaid.btc"</span></div>
+    <div><span class="t-p">  address   </span><span class="t-p">: </span><span class="t-ok">[ withheld — zero-knowledge ]</span></div>
+    <div><span class="t-p">  verified  </span><span class="t-p">: </span><span class="t-ok">✓ on-chain · Starknet Sepolia</span></div>
+  </div>
+</div>
+</section>
+
+<!-- USE CASES -->
+<section>
+<div class="si">
+  <p class="sl rv">Who Uses Privex</p>
+  <h2 class="sh rv">Built for anyone who needs<br>to prove without exposing.</h2>
+  <p class="ss rv">From DeFi protocols to private individuals, the ability to prove Bitcoin ownership without disclosure has wide and growing applications across the ecosystem.</p>
+  <div class="use-grid rv">
+    <div class="uc">
+      <span class="uc-i">🏦</span>
+      <h3>DeFi Collateral</h3>
+      <p>Unlock lending, borrowing, or yield positions on Starknet by proving BTC holdings — without bridging assets or revealing your wallet address.</p>
+      <div class="uc-w">DeFi protocols · Lenders</div>
+    </div>
+    <div class="uc">
+      <span class="uc-i">🗳️</span>
+      <h3>DAO Governance</h3>
+      <p>Gate voting rights by Bitcoin holdings. Members prove their stake without doxxing their address to the DAO or any public record.</p>
+      <div class="uc-w">DAOs · Governance systems</div>
+    </div>
+    <div class="uc">
+      <span class="uc-i">🤝</span>
+      <h3>OTC Trust</h3>
+      <p>Establish credibility in peer-to-peer deals. Share a signed ZK certificate — not your address — to prove you have the funds.</p>
+      <div class="uc-w">OTC traders · P2P markets</div>
+    </div>
+    <div class="uc">
+      <span class="uc-i">🎟️</span>
+      <h3>Token-Gated Access</h3>
+      <p>Restrict access to communities or content to verified Bitcoin holders — without storing any wallet address on record.</p>
+      <div class="uc-w">Communities · Platforms</div>
+    </div>
+    <div class="uc">
+      <span class="uc-i">📋</span>
+      <h3>Compliance</h3>
+      <p>Satisfy proof-of-funds requirements without full financial disclosure. Demonstrate sufficiency to a threshold — nothing beyond that.</p>
+      <div class="uc-w">Exchanges · Institutions</div>
+    </div>
+    <div class="uc">
+      <span class="uc-i">🔐</span>
+      <h3>Personal Privacy</h3>
+      <p>Prove long-term holding. Establish credibility anywhere. Your history is yours — Privex lets you decide exactly what to reveal.</p>
+      <div class="uc-w">Individuals · HODLers</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- STACK -->
+<section class="stack-bg">
+<div class="si">
+  <p class="sl rv">The Stack</p>
+  <h2 class="sh rv">Production-grade cryptography,<br>assembled carefully.</h2>
+  <p class="ss rv">Every component was chosen for correctness and composability. The proof system is fully open — circuits, contracts, and calldata encoding are all auditable.</p>
+  <div class="stack-grid rv">
+    <div class="stk">
+      <div class="stk-n">Noir</div>
+      <span class="stk-v">1.0.0-beta.16</span>
+      <p>ZK circuit language. Three circuits: balance threshold, multi-address combined balance, and historical ownership with 8-header Bitcoin chain verification.</p>
+    </div>
+    <div class="stk">
+      <div class="stk-n">bb.js</div>
+      <span class="stk-v">3.0.0-nightly</span>
+      <p>Barretenberg WASM backend. Runs UltraKeccakZKHonk proving entirely in the browser. No server-side computation required at any step.</p>
+    </div>
+    <div class="stk">
+      <div class="stk-n">Garaga</div>
+      <span class="stk-v">1.0.1</span>
+      <p>Proof encoding library for Starknet. Converts UltraKeccakZKHonk proofs into the calldata format expected by deployed Cairo verifier contracts.</p>
+    </div>
+    <div class="stk">
+      <div class="stk-n">Starknet</div>
+      <span class="stk-v">Sepolia · Cairo 2.14</span>
+      <p>L2 settlement. The router contract dispatches proofs to Garaga-generated type-specific verifiers. Results are permanent and publicly auditable.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <p class="sl rv">Get Started</p>
+  <h2 class="rv">Your proof,<br><span style="color:var(--orange)">your terms.</span></h2>
+  <p class="rv">Generate a ZK proof of your Bitcoin holdings in minutes. Nothing leaves your browser until you choose to submit.</p>
+  <div class="cta-cards rv">
+    <a href="/proof.html" class="cc cc-o">
+      <span class="cc-icon">⚡</span>
+      <h3>Proof Engine</h3>
+      <p>Generate balance, multi-address, or historical proofs individually with full control over each parameter.</p>
+      <span class="cc-arr">Open Engine →</span>
+    </a>
+    <a href="/report.html" class="cc cc-v">
+      <span class="cc-icon">📋</span>
+      <h3>Report Generator</h3>
+      <p>Run both proofs automatically and download a signed certificate in public and private variants.</p>
+      <span class="cc-arr">Generate Report →</span>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="fl">
+    <a href="/" class="flogo">Privex</a>
+    <span class="fcopy">© 2026 Privex · Starknet Sepolia Testnet · Open Source</span>
+  </div>
+  <div class="flinks">
+    <a href="/">Home</a>
+    <a href="/proof.html">Proof Engine</a>
+    <a href="/report.html">Report</a>
+    <a href="https://sepolia.voyager.online/contract/0x002b84348549bdbdac2e9de4176ea15740ac5b64bd22310be38176fdf0cb3ff2" target="_blank">Contract ↗</a>
+  </div>
+  <div class="fsoc">
+    <a href="/" class="si-a" title="Website">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    </a>
+    <a href="https://x.com" target="_blank" class="si-a" title="X">
+      <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a href="https://github.com" target="_blank" class="si-a" title="GitHub">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+    </a>
+  </div>
+</footer>
+
+<script>
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}}),{threshold:.08,rootMargin:'0px 0px -32px 0px'});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+
+function getW(){const w=window;return w.starknet_argentX??w.starknet_braavos??w.starknet??null}
+const wbtn=document.getElementById('wbtn'),waddr=document.getElementById('waddr');
+async function conn(){
+  const inj=getW();
+  if(!inj){wbtn.textContent='No wallet found';return}
+  try{
+    wbtn.textContent='Connecting...';wbtn.disabled=true;
+    const acc=await inj.request({type:'wallet_requestAccounts',params:{silent_mode:false}});
+    const a=acc?.[0]??'';if(!a)throw new Error();
+    wbtn.textContent='Connected';wbtn.classList.add('on');
+    waddr.textContent=a.slice(0,6)+'...'+a.slice(-4);wbtn.disabled=false;
+  }catch{wbtn.textContent='Connect Wallet';wbtn.disabled=false}
+}
+wbtn.addEventListener('click',conn);
+const _w=getW();
+if(_w?.isConnected||_w?.selectedAddress){
+  const a=_w.selectedAddress??_w.account?.address??'';
+  if(a){wbtn.textContent='Connected';wbtn.classList.add('on');waddr.textContent=a.slice(0,6)+'...'+a.slice(-4)}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+[package]
+name = "historical"
+type = "bin"
+authors = [""]
+
+[dependencies]

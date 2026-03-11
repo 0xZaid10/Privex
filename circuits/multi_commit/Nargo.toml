@@ -1,0 +1,6 @@
+[package]
+name = "multi_commit"
+type = "bin"
+authors = [""]
+
+[dependencies]
