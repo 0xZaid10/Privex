@@ -48,7 +48,7 @@ Everything runs in the browser. Your Bitcoin data never leaves your machine. Onl
 Bitcoin is the most widely held, most trusted store of value in crypto. But Bitcoin holders are completely locked out of the on-chain economy unless they sacrifice their privacy entirely.
 
 **Today, if you want to:**
-- Access a DeFi protocol that requires proof of assets
+- Access a platform or community that requires proof of assets
 - Participate in DAO governance weighted by BTC holdings
 - Prove your long-term holder status to unlock platform tiers
 - Verify your net worth to a fund, partner, or counterparty
@@ -98,7 +98,7 @@ Bitcoin addresses are pseudonymous, not anonymous. Once an address is linked to 
 > *"I hold at least X BTC right now"*
 - Prove current balance exceeds any threshold you choose
 - Single Bitcoin address
-- Useful for DeFi collateral, platform access, airdrop eligibility
+- Useful for platform access, airdrop eligibility, community gating
 
 ### 🟣 Multi-Address Balance
 > *"My combined holdings across multiple addresses exceed X BTC"*
@@ -142,8 +142,8 @@ For your own records. Contains everything in the public report plus:
 **🟠 Long-term Bitcoin holders**  
 Prove OG status and holding duration without exposing wallet history or transaction timeline.
 
-**🔵 DeFi users**  
-Access Starknet protocols with Bitcoin-backed credentials — no bridging, no wrapping, no custodians.
+**🔵 On-chain participants**  
+Access Starknet applications and communities with Bitcoin-backed credentials — no bridging, no wrapping.
 
 **🟣 DAO participants**  
 Vote or govern with BTC-weighted influence without linking your Bitcoin identity to your governance wallet.
@@ -487,7 +487,6 @@ All five contracts are live and verifiable on [Voyager](https://sepolia.voyager.
 | Anonymous proof submission (v1 router) | ✅ Live |
 | **Bitcoin wallet signing** | ⚠️ Not yet implemented |
 | Starknet Mainnet | 🔜 Roadmap |
-| DeFi protocol integrations | 🔜 Roadmap |
 
 > ⚠️ **Wallet Ownership Note:**  
 > Currently, any Bitcoin address can be entered to generate a proof. There is no cryptographic check that the submitter owns the address. Bitcoin wallet signing — requiring the user to sign a message with their private key — is planned and will be required before any mainnet deployment.
@@ -613,12 +612,11 @@ Starknet    ^9.4.2 (JS SDK)
 - Security audit of circuits and Cairo contracts
 - Support for P2PKH, P2SH, P2WPKH address formats
 
-### Phase 2 — DeFi Integrations
-- SDK for protocols to accept Privex proofs as credentials
-- Starknet lending protocol integration — BTC proof as collateral signal
-- DEX tier access based on verified BTC holdings
-- NFT and airdrop gating by Bitcoin holder status
+### Phase 2 — Integrations & Access Control
+- SDK for applications to accept Privex proofs as credentials
+- NFT and airdrop gating by verified Bitcoin holdings
 - DAO governance plugin — BTC-weighted voting without doxxing
+- Community and platform access gating
 
 ### Phase 3 — Multi-Chain & Standards
 - Proof verification on Ethereum L1 via EVM-compatible verifier
@@ -638,7 +636,7 @@ Starknet    ^9.4.2 (JS SDK)
 
 - **Native ZK** — Starknet is itself a ZK rollup. Verifying ZK proofs on Starknet is cheap and fast; the same operation on Ethereum L1 would cost hundreds of dollars
 - **Garaga** — the Starknet ecosystem has Garaga, purpose-built for encoding and verifying Honk proofs on Cairo. This is what made on-chain Noir proof verification practical
-- **Growing DeFi ecosystem** — the protocols that will eventually integrate Privex credentials are being built on Starknet right now
+- **Growing ecosystem** — the applications that will eventually integrate Privex credentials are being built on Starknet right now
 
 ---
 
