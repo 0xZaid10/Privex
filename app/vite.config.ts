@@ -24,6 +24,13 @@ export default defineConfig({
   },
   build: {
     target: "esnext",
+    rollupOptions: {
+      input: {
+        main:   path.resolve(__dirname, "index.html"),
+        proof:  path.resolve(__dirname, "proof.html"),
+        report: path.resolve(__dirname, "report.html"),
+      },
+    },
   },
   server: {
     headers: {
