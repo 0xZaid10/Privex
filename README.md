@@ -133,7 +133,7 @@ For your own records. Contains everything in the public report plus:
 - Full technical proof details and public inputs
 - Commitment hashes
 - Timing information (proof generation duration)
-- On-chain block numbers, timestamps, and transaction fees
+- On-chain block numbers, timestamps, and actual balnce
 
 ---
 
