@@ -74,7 +74,7 @@ Bitcoin addresses are pseudonymous, not anonymous. Once an address is linked to 
 1. **Open Privex in your browser** — no installation, no wallet needed to generate a proof
 2. **Enter your Bitcoin address and threshold** — e.g. "prove I hold at least 0.5 BTC"
 3. **Wait ~15 seconds** — your browser fetches UTXO data from mempool.space and generates a ZK proof entirely locally. Your address never leaves your machine
-4. **Connect your Starknet wallet** — Argent X or Braavos
+4. **Connect your Starknet wallet** — Ready(Formerly Argent) or Braavos
 5. **Submit the proof on-chain** — one transaction to the Privex router contract on Starknet Sepolia
 6. **Share your proof** — verifiable by anyone on Voyager. Download a public certificate or full private report
 
